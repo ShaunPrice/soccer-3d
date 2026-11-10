@@ -213,7 +213,7 @@ tbody tr{animation:rowin .4s both}
     <h3>Score</h3>
     <p>Each match earns points: 100 per goal, 500 for a win plus 150 per goal of margin, 150 for a draw plus 250 for winning the shoot-out; all multiplied by the level. The best results go on the Hall of Fame.</p>
     <h3>Players and saving</h3>
-    <p>Each player name has its own progress. Progress saves automatically. <b>Pause → Save &amp; quit</b> stores the match in progress; resume it from the menu. Saves live in this browser on this device.</p>
+    <p>Each player name has its own progress. Progress saves automatically. <b>Pause → Save &amp; quit</b> stores the match in progress, including the score, clock, statistics, stamina, injuries, substitutions, cards and send-offs; resume it from the menu. Saves live in this browser on this device.</p>
     <h3>Views</h3>
     <p>Hold the device sideways for a broadcast view; upright for a view from behind your team.</p>
   </div>
@@ -538,7 +538,7 @@ function kickoff(t){
   let cj=6;while(players[cj].out&&cj>1)cj--;ctrl=players[cj];charge=0;charging=false;rec.length=0;
   state='ready';stT=1.4;note('');
 }
-const snap=()=>({lv,len:matchLen,score:score.slice(),timeLeft,half,st:ST});
+const snap=()=>({lv,len:matchLen,score:score.slice(),timeLeft,half,st:ST,subs:subs.slice(),pl:players.map(p=>[+p.sta.toFixed(3),p.inj?1:0,p.num,p.yc||0,p.out?1:0])});
 function begin(sv){
   initAudio();['menu','over','pause','board','help','userO','splash'].forEach(hide);document.body.classList.add('ingame');paused=false;
   const u=user();
@@ -547,7 +547,11 @@ function begin(sv){
   else{lv=selLv;matchLen=DB.opts.len*60;score=[0,0];timeLeft=matchLen;half=1;}
   setDirs(half);D=levelDiff(lv);applyKit(lv);
   subs=[3,3];for(const p of players){p.out=false;p.yc=0;p.sta=1;p.inj=0;if(p.num!==NUMS[p.idx]){p.num=NUMS[p.idx];p.numMesh.material=numMat(p.num);}}applyForm(0,DB.opts.form);applyForm(1,LFORM[lv]);ment[0]=DB.opts.ment;ment[1]=1;
-  ST=sv&&sv.st&&sv.st.shots?sv.st:newStats();addOn=false;stops=0;pk=null;ref.x=0;ref.z=8;abbr=[(DB.cur||'YOU').replace(/[^\p{L}\p{N}]/gu,'').slice(0,3).toUpperCase()||'YOU',LEVELS[lv][1]];
+  ST=sv&&sv.st&&sv.st.shots?sv.st:newStats();addOn=false;stops=0;pk=null;ref.x=0;ref.z=8;
+  if(sv&&Array.isArray(sv.pl)&&sv.pl.length===players.length){ // restore stamina, injuries, shirt numbers, cards and send-offs
+    if(Array.isArray(sv.subs))subs=[clamp(sv.subs[0]|0,0,3),clamp(sv.subs[1]|0,0,3)];
+    players.forEach((p,i)=>{const a=sv.pl[i]||[];p.sta=clamp(+a[0]||0,0,1);p.inj=a[1]?1:0;p.yc=a[3]|0;p.out=!!a[4]&&!p.gk;
+      const n=a[2]|0;if(n>0&&n<100&&n!==p.num){p.num=n;p.numMesh.material=numMat(n);}});}abbr=[(DB.cur||'YOU').replace(/[^\p{L}\p{N}]/gu,'').slice(0,3).toUpperCase()||'YOU',LEVELS[lv][1]];
   $('t0').textContent=abbr[0];$('t1').textContent=abbr[1];
   hud();kickoff(half===1?0:1);
   showMsg('LEVEL '+(lv+1)+'<small>v '+LEVELS[lv][0].toUpperCase()+'</small>',1.5);SFX.say('v_kickoff',.5);setCrowd(1);
