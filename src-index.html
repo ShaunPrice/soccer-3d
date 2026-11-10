@@ -476,6 +476,8 @@ function initAudio(){
   try{
     AC=new (window.AudioContext||window.webkitAudioContext)();
     master=AC.createGain();master.gain.value=muted?0:.9;master.connect(AC.destination);
+    try{const z=AC.createBufferSource();z.buffer=AC.createBuffer(1,1,22050);z.connect(AC.destination);z.start(0);}catch(e){} // unlock on touch devices
+    if(AC.state!=='running')AC.resume().catch(()=>{});
     const names=Object.keys(SND_DATA);let left=names.length;
     const done=()=>{if(--left<=0)startCrowd();};
     if(!left)startCrowd();
@@ -487,6 +489,14 @@ function initAudio(){
   }catch(e){AC=null;}
 }
 const pendingSay={};
+// Phones suspend audio when the page is backgrounded, the screen locks or a call arrives, and do not always
+// bring it back. Any later touch or key press therefore re-starts it.
+function unlockAudio(){
+  if(!AC){if(state!=='splash')initAudio();return;}
+  if(AC.state!=='running'&&!paused){try{const r=AC.resume();if(r&&r.catch)r.catch(()=>{});}catch(e){}}
+}
+['pointerup','touchend','click','keydown'].forEach(ev=>document.addEventListener(ev,unlockAudio,{capture:true,passive:true}));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(unlockAudio,200);});
 function noiseBuf(sec){const b=AC.createBuffer(1,AC.sampleRate*sec,AC.sampleRate),d=b.getChannelData(0);
   for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return b;}
 let crowdLvl=.5;
