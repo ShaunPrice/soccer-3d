@@ -18,6 +18,7 @@ Open `index.html` in a mobile or desktop browser, or use GitHub Pages:
 - Fouls with free kicks, defensive walls and penalties; yellow and red cards with send-offs; offside; a referee
 - Added time, and a penalty shoot-out when a match is level at full time
 - Tactics: formation, mentality and pressing; opponents vary formation and chase the game when behind
+- Stamina and a sprint button; injuries; three substitutes a side
 - Full-time match statistics
 - Slow-motion goal replays
 - Eight levels of rising difficulty; win one to unlock the next
@@ -32,6 +33,7 @@ Open `index.html` in a mobile or desktop browser, or use GitHub Pages:
 | Left thumb (or arrows / WASD) | Move | Move |
 | Red button (or Space) | Shoot: tap for a low drive, hold for power | Sliding tackle |
 | Blue button (or Shift) | Pass to the ringed team-mate | Switch player |
+| Green button (or C) | Sprint (drains stamina) | Sprint (drains stamina) |
 
 Landscape gives a broadcast side view; portrait gives a view from behind the team.
 
