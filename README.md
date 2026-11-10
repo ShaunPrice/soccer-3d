@@ -14,7 +14,8 @@ Open `index.html` in a mobile or desktop browser, or use GitHub Pages:
 
 - 3D stadium with jointed, animated players, real-time shadows and a big-screen scoreboard
 - Animated introduction, followed by the Hall of Fame scoreboard
-- Two halves, throw-ins, corners and goal kicks
+- Two halves with a change of ends, throw-ins, corners and goal kicks
+- Optional fouls (free kicks and penalties) and offside, switched on in the menu options
 - Slow-motion goal replays
 - Eight levels of rising difficulty; win one to unlock the next
 - Player profiles, automatic progress saving, save-and-resume of a match in progress
