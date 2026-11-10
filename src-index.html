@@ -119,7 +119,7 @@ tbody tr{animation:rowin .4s both}
 .keyc{display:inline-block;min-width:66px;font-weight:900}
 #final{font-size:min(18vw,84px);font-weight:900;font-variant-numeric:tabular-nums;margin:2px 0;line-height:1}
 #pts{font-size:22px;font-weight:900;color:#ffd83c}#extra{min-height:20px;margin:4px 0;font-size:14px;opacity:.9}
-#splash{background:radial-gradient(ellipse at center,#12402a,#06120c)}
+#splash{background:#06120c center/cover no-repeat}#splash>.in{margin:0 auto;min-height:100%;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:3vh 0 2vh}#splash h1{font-size:min(11vw,13vh,74px)}#splash br{display:none}@media (max-aspect-ratio:1/1){#splash br{display:inline}#splash h1{font-size:min(15vw,74px);margin-top:6vh}}#splash h1{text-shadow:0 4px 0 rgba(0,0,0,.45),0 0 40px rgba(0,0,0,.7)}#splash #tap,#splash .foot{text-shadow:0 2px 8px #000}#splash .foot{opacity:.8}
 #tap{margin-top:26px;letter-spacing:.3em;font-size:15px;animation:blink 1.4s ease-in-out infinite}
 #introT{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;padding-bottom:13vh;pointer-events:auto;
   background:linear-gradient(to top,rgba(0,0,0,.55),transparent 45%)}
@@ -153,9 +153,9 @@ tbody tr{animation:rowin .4s both}
 <div id="introT"><div><h1 id="introH"></h1><p>A CLAUDE FABLE 5.2 TEST · SOUND BY ELEVENLABS</p><em>TAP TO SKIP</em></div></div>
 
 <div class="ovl on" id="splash"><div class="in">
-  <h1>POCKET<br><i>SOCCER</i> 3D</h1>
-  <div id="tap">TAP TO START</div>
-  <div class="foot">A Claude Fable 5.2 test build · sound by ElevenLabs</div>
+  <h1>POCKET <br><i>SOCCER</i> 3D</h1>
+  <div><div id="tap">TAP TO START</div>
+  <div class="foot">A Claude Fable 5.2 test build · sound and artwork by ElevenLabs</div></div>
 </div></div>
 
 <div class="ovl" id="board"><div class="in" style="max-width:560px">
@@ -256,12 +256,14 @@ tbody tr{animation:rowin .4s both}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 const SND_DATA={/*__SND__*/};
+const BG_DATA="/*__BG__*/";
 </script>
 <script>
 (function(){
 'use strict';
 const $=id=>document.getElementById(id);
 const show=id=>$(id).classList.add('on'),hide=id=>$(id).classList.remove('on');
+if(BG_DATA.length>200)$('splash').style.backgroundImage='linear-gradient(to bottom,rgba(3,8,6,.6),rgba(3,8,6,.08) 48%,rgba(3,8,6,.72)),url(data:image/jpeg;base64,'+BG_DATA+')';
 if(!window.THREE){hide('splash');show('err');return;}
 const T=THREE;
 const L=38,W=24,GW=3.66,GH=2.44,BR=0.22,NP=7;

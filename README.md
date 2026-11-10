@@ -3,7 +3,7 @@
 A seven-a-side 3D soccer game for phones and tablets, in a single self-contained HTML file.
 
 This repository is a **test of Claude Fable 5.2**: the game was written by the model in one conversation.
-Sound effects and commentary were generated with **ElevenLabs**.
+Sound effects, commentary and the start-screen artwork were generated with **ElevenLabs**.
 
 ## Play
 
@@ -40,5 +40,5 @@ Landscape gives a broadcast side view; portrait gives a view from behind the tea
 ## Notes
 
 - Rendering uses three.js r128 from cdnjs. Everything else, including audio, is embedded in `index.html`.
-- `src-index.html` is the source without audio; `python3 build.py` embeds the clips in `sounds/` and writes `index.html`.
+- `src-index.html` is the source without audio; `python3 build.py` embeds the clips in `sounds/` and the image in `art/`, and writes `index.html`.
 - Profiles, saves and scores are stored in the browser's local storage on the device.
