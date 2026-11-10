@@ -29,7 +29,11 @@ body.ingame #score{opacity:1}
 #score .tm small{font-size:.6em;opacity:.7;margin-left:4px}
 .top{position:absolute;top:10px;pointer-events:auto;width:40px;height:40px;border-radius:50%;border:0;
   background:rgba(10,20,30,.7);color:#fff;font:inherit;font-size:17px;font-weight:800}
-#bPause{right:10px}#bHelp{right:58px}#bMute{right:106px}
+#bPause{right:10px}#bHelp{right:58px}
+#bMute{position:fixed;z-index:60;right:10px;top:10px;width:auto;padding:0 13px;border-radius:20px;font-size:12px;letter-spacing:.1em;border:1px solid rgba(255,255,255,.35);background:rgba(10,20,30,.78)}
+#bMute.off{color:#ff9a9a;border-color:rgba(255,120,120,.6)}
+body.ingame #bMute{right:106px}#bHelp{display:none}body.ingame #bHelp{display:block}
+@media (max-width:560px){body.ingame #bMute{top:56px}}
 #bPause{display:none}body.ingame #bPause{display:block}
 @media (max-width:560px){.top{top:56px}}
 #note{position:absolute;top:56px;left:50%;transform:translateX(-50%);background:rgba(10,20,30,.8);padding:5px 14px;
@@ -144,7 +148,6 @@ tbody tr{animation:rowin .4s both}
 <div id="hud">
   <div id="score"><span class="tb" id="t0">YOU</span><span id="s0">0</span><span class="tm"><span id="clock" style="padding:0;background:none">0:00</span><small id="halfL">1H</small></span><span id="s1">0</span><span class="tr" id="t1">CPU</span></div>
   <div id="note"></div>
-  <button class="top" id="bMute" aria-label="Sound">♪</button>
   <button class="top" id="bHelp" aria-label="How to play">?</button>
   <button class="top" id="bPause" aria-label="Pause">II</button>
   <div id="msg"></div>
@@ -207,6 +210,7 @@ tbody tr{animation:rowin .4s both}
     <p><span class="keyc">TACKLE</span> Without the ball, the red button is a sliding tackle. A miss leaves you on the ground for a moment.</p>
     <p><span class="keyc">SWITCH</span> Without the ball, the blue button moves control to the next-nearest player. The yellow ring marks who you control.</p>
     <p><span class="keyc">RUN</span> Hold the green button to sprint. Sprinting drains the <b>stamina</b> bar (top left); tired players are slower. Keyboard: C.</p>
+    <p><span class="keyc">SOUND</span> The <b>Sound on / off</b> button at the top right is available on every screen, including the first. Your choice is remembered.</p>
     <h3>Rules</h3>
     <p>Seven a side, two halves; the teams <b>change ends</b> at half time. The ball going out gives a <b>throw-in</b>, <b>corner</b> or <b>goal kick</b>; when it is yours, you get a moment unchallenged to play it. Every goal is followed by a <b>slow-motion replay</b>; tap to skip.</p>
     <p><b>Fouls:</b> a sliding tackle from behind, or a mistimed one, gives a free kick with a defensive wall, or a <b>penalty</b> inside the box. The referee shows a <b>yellow card</b> for the worse ones; two yellows, or a foul from behind in the box, is a <b>red card</b> and that side plays a man short.</p>
@@ -222,7 +226,7 @@ tbody tr{animation:rowin .4s both}
     <h3>Players and saving</h3>
     <p>Each player name has its own progress. Progress saves automatically. <b>Pause → Save &amp; quit</b> stores the match in progress, including the score, clock, statistics, stamina, injuries, substitutions, cards and send-offs; resume it from the menu. Saves live in this browser on this device.</p>
     <h3>Install</h3>
-    <p id="instHelp">Open the game at its web address and it can be installed like an app and played offline. <b>Android / Chrome:</b> use the <b>Install app</b> button on the menu, or the browser menu → Install app. <b>iPhone / iPad:</b> in Safari tap Share → <b>Add to Home Screen</b>.</p>
+    <p style="display:none"></p><p id="instHelp">Open the game at its web address and it can be installed like an app and played offline. <b>Android / Chrome:</b> use the <b>Install app</b> button on the menu, or the browser menu → Install app. <b>iPhone / iPad:</b> in Safari tap Share → <b>Add to Home Screen</b>.</p>
     <h3>Views</h3>
     <p>Hold the device sideways for a broadcast view; upright for a view from behind your team.</p>
   </div>
@@ -260,6 +264,7 @@ tbody tr{animation:rowin .4s both}
   <button class="go alt" id="overScores">High scores</button>
   <button class="go alt" id="tomenu">Menu</button>
 </div></div>
+<button class="top" id="bMute" aria-label="Sound on or off">SOUND ON</button>
 <div class="ovl" id="err"><div class="in"><h1>Could not load</h1><p>The 3D library did not load. Check the connection and reload.</p></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -286,7 +291,7 @@ const hex=c=>'#'+('00000'+c.toString(16)).slice(-6);
 
 /* ---------- storage: players, progress, scores ---------- */
 const KEY='pocketSoccer3d.v2';
-const DB={cur:null,users:{},scores:[],opts:{len:4,shadows:1,fouls:1,offside:1,form:'2-3-1',ment:1,press:1}};
+const DB={cur:null,users:{},scores:[],opts:{len:4,shadows:1,sound:1,fouls:1,offside:1,form:'2-3-1',ment:1,press:1}};
 try{const s=localStorage.getItem(KEY);if(s){const d=JSON.parse(s);if(d&&typeof d==='object'&&d.users&&typeof d.users==='object'){
   DB.cur=d.cur||null;DB.users=d.users;DB.scores=Array.isArray(d.scores)?d.scores:[];Object.assign(DB.opts,d.opts||{});}}}catch(e){}
 if(DB.opts.v!==2){DB.opts.fouls=1;DB.opts.offside=1;DB.opts.v=2;}
@@ -470,7 +475,7 @@ const tgtRing=new T.Mesh(new T.RingGeometry(.5,.62,24),new T.MeshBasicMaterial({
 tgtRing.rotation.x=-Math.PI/2;scene.add(tgtRing);
 
 /* ---------- audio ---------- */
-let AC=null,master=null,muted=false,crowdGain=null;const BUF={},NORM={};
+let AC=null,master=null,muted=DB.opts.sound===0,crowdGain=null;const BUF={},NORM={};
 function initAudio(){
   if(AC){if(AC.state==='suspended'&&!paused)AC.resume();return;}
   try{
@@ -1212,7 +1217,9 @@ $('bUser').addEventListener('click',showUser);
 $('quit').addEventListener('click',()=>{const u=user();if(u){u.saved=null;persist();}if(AC)AC.resume();hide('replay');showMenu();});
 $('saveQuit').addEventListener('click',()=>{const u=user();if(u&&!pk){u.saved=snap();persist();}if(AC)AC.resume();hide('replay');showMenu();});
 $('resume').addEventListener('click',togglePause);$('bPause').addEventListener('click',togglePause);
-$('bMute').addEventListener('click',()=>{initAudio();muted=!muted;if(master)master.gain.value=muted?0:.9;$('bMute').style.opacity=muted?.4:1;});
+function muteLabel(){const b=$('bMute');b.textContent=muted?'SOUND OFF':'SOUND ON';b.classList.toggle('off',muted);}
+muteLabel();
+$('bMute').addEventListener('click',e=>{e.stopPropagation();muted=!muted;DB.opts.sound=muted?0:1;persist();muteLabel();if(state!=='splash'||!muted)initAudio();if(master)master.gain.value=muted?0:.9;});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&inMatch()&&!paused){const u=user();if(u&&state!=='replay'&&!pk){u.saved=snap();persist();}togglePause();}});
 
 /* ---------- install as an app (works when served over https, e.g. GitHub Pages) ---------- */
