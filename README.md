@@ -10,6 +10,15 @@ Sound effects, commentary and the start-screen artwork were generated with **Ele
 Open `index.html` in a mobile or desktop browser, or use GitHub Pages:
 <https://shaunprice.github.io/soccer-3d/>
 
+## Install on a phone or tablet
+
+Open <https://shaunprice.github.io/soccer-3d/> on the device, then:
+
+- **Android (Chrome):** tap **Install app** on the game menu, or the browser menu → *Install app* / *Add to Home screen*.
+- **iPhone / iPad (Safari):** tap Share → **Add to Home Screen**.
+
+Once installed it opens full screen from its own icon and works offline.
+
 ## Features
 
 - 3D stadium with jointed, animated players, real-time shadows and a big-screen scoreboard
@@ -39,6 +48,7 @@ Landscape gives a broadcast side view; portrait gives a view from behind the tea
 
 ## Notes
 
+- `manifest.webmanifest`, `sw.js` and `icons/` make the game an installable, offline-capable web app.
 - Rendering uses three.js r128 from cdnjs. Everything else, including audio, is embedded in `index.html`.
 - `src-index.html` is the source without audio; `python3 build.py` embeds the clips in `sounds/` and the image in `art/`, and writes `index.html`.
 - Profiles, saves and scores are stored in the browser's local storage on the device.
